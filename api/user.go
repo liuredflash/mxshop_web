@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"mxshop_web/global"
 	"mxshop_web/global/response"
 	"mxshop_web/proto"
 	"net/http"
@@ -33,7 +34,7 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 				})
 			case codes.Unavailable:
 				c.JSON(http.StatusInternalServerError, gin.H{
-					"msg": "用户服务不可用",
+					"msg": "用户服务不可用" + e.Message(),
 				})
 			case codes.Unknown:
 				c.JSON(http.StatusInternalServerError, gin.H{
@@ -50,9 +51,10 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 
 func GetUserList(ctx *gin.Context) {
 	zap.S().Debugf("获取用户列表")
-	ip := "127.0.0.1"
-	port := 3001
-	userConn, err := grpc.Dial(fmt.Sprintf("%s:%d", ip, port), grpc.WithInsecure())
+	zap.S().Debugf(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvInfo.Host,
+		global.ServerConfig.UserSrvInfo.Port))
+	userConn, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvInfo.Host,
+		global.ServerConfig.UserSrvInfo.Port), grpc.WithInsecure())
 	if err != nil {
 		zap.S().Errorw("[GetUserList] 连接 【用户服务失败】",
 			"msg", err.Error(),
