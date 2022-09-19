@@ -8,4 +8,5 @@ import (
 
 func InitUserRouter(Router *gin.RouterGroup) {
 	Router.GET("/user/list", api.GetUserList)
+	Router.POST("/user/passwd_login", api.PasswordLogin)
 }

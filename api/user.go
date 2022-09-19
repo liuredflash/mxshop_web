@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"mxshop_web/forms"
 	"mxshop_web/global"
 	"mxshop_web/global/response"
 	"mxshop_web/proto"
@@ -50,6 +51,13 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 	}
 }
 
+func HandleValidatorError(ctx *gin.Context, err error) {
+	// TODO 英文提示转成中文
+	ctx.JSON(http.StatusBadRequest, gin.H{
+		"msg": err.Error(),
+	})
+}
+
 func GetUserList(ctx *gin.Context) {
 	zap.S().Debugf("获取用户列表")
 	zap.S().Debugf(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvInfo.Host,
@@ -93,4 +101,13 @@ func GetUserList(ctx *gin.Context) {
 
 func PasswordLogin(ctx *gin.Context) {
 	//表单验证
+	passwordLoginForm := forms.PassWordLoginForm{}
+	if err := ctx.ShouldBind(&passwordLoginForm); err != nil {
+		// TODO 英文提示转成中文
+		HandleValidatorError(ctx, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"msg": "登录成功",
+	})
 }
