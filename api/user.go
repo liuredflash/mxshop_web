@@ -7,6 +7,7 @@ import (
 	"mxshop_web/global/response"
 	"mxshop_web/proto"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -62,9 +63,13 @@ func GetUserList(ctx *gin.Context) {
 	}
 	//调用接口
 	userSrvClient := proto.NewUserClient(userConn)
+	pn := ctx.DefaultQuery("pn", "0")
+	pnInt, _ := strconv.Atoi(pn) // 字符串到int的强转
+	pSize := ctx.DefaultQuery("psize", "0")
+	pSizeInt, _ := strconv.Atoi(pSize)
 	rsp, err := userSrvClient.GetUserList(context.Background(), &proto.PageInfo{
-		Pn:    0,
-		PSize: 0,
+		Pn:    uint32(pnInt),
+		PSize: uint32(pSizeInt),
 	})
 	if err != nil {
 		zap.S().Errorw("[GetUserList] 连接 【获取用户列表失败】")
@@ -82,6 +87,10 @@ func GetUserList(ctx *gin.Context) {
 		}
 		result = append(result, user)
 
-		ctx.JSON(http.StatusOK, result)
 	}
+	ctx.JSON(http.StatusOK, result)
+}
+
+func PasswordLogin(ctx *gin.Context) {
+	//表单验证
 }

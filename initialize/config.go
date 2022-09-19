@@ -14,7 +14,7 @@ func GetEnvInfo(env string) bool {
 	return viper.GetBool(env)
 }
 func InitConfig() {
-	viper.SetConfigType("yaml")
+	viper.SetConfigType("yaml") //当文件不是yaml结尾时需要显示指定，是yaml结尾时可以不要
 	debug := GetEnvInfo("MXSHOP_DEBUG")
 	configFilePrefix := "config"
 	var configFileName string
