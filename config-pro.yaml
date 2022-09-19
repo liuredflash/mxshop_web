@@ -3,3 +3,6 @@ port: 8080
 user_srv:
   host: "127.0.0.1"
   port: 3001
+
+jwt:
+  key: "l#z0%18wvFv7(~ZGIA@I"

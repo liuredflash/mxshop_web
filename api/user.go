@@ -6,11 +6,14 @@ import (
 	"mxshop_web/forms"
 	"mxshop_web/global"
 	"mxshop_web/global/response"
+	"mxshop_web/middlewares"
+	"mxshop_web/models"
 	"mxshop_web/proto"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -144,8 +147,31 @@ func PasswordLogin(ctx *gin.Context) {
 			})
 		} else {
 			if passRsp.Success {
+				// 生成token
+				j := middlewares.NewJWT()
+				claims := models.CustomClaims{
+					ID:          uint(rsp.Id),
+					NickName:    rsp.NickName,
+					AuthorityId: uint(rsp.Role),
+					StandardClaims: jwt.StandardClaims{
+						NotBefore: time.Now().Unix(),
+						ExpiresAt: time.Now().Unix() + 60*60*24*30,
+						Issuer:    "imooc",
+					},
+				}
+				token, err := j.CreateToken(claims)
+				if err != nil {
+					ctx.JSON(http.StatusInternalServerError, gin.H{
+						"msg": "生成token失败",
+					})
+					return
+				}
 				ctx.JSON(http.StatusOK, gin.H{
-					"msg": "登录成功",
+					"msg":        "登录成功",
+					"id":         rsp.Id,
+					"nick_name":  rsp.NickName,
+					"token":      token,
+					"expired_at": (time.Now().Unix() + 60*60*24*30) * 1000,
 				})
 			} else {
 				ctx.JSON(http.StatusBadRequest, gin.H{
