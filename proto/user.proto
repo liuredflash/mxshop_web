@@ -8,6 +8,16 @@ service User {
     rpc GetUserById(IdRequest) returns (UserInfoResponse);
     rpc CreateUser(CreateUserInfo) returns (UserInfoResponse);
     rpc UpdateUser (UpdateUserInfo) returns (google.protobuf.Empty);
+    rpc CheckPassWord(PassWordCheckInfo) returns (CheckResponse);
+}
+
+message PassWordCheckInfo {
+    string password = 1;
+    string encryptedPassword = 2;
+}
+
+message CheckResponse {
+    bool success = 1;
 }
 
 message PageInfo {
