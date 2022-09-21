@@ -15,6 +15,8 @@ func main() {
 	initialize.InitLogger()
 	initialize.InitConfig()
 	Router := initialize.Routers()
+	//初始化srv的连接,需要再初始化config之后
+	initialize.InitSrvClient()
 
 	//注册验证器
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
