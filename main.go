@@ -18,7 +18,7 @@ func main() {
 
 	//注册验证器
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterValidation("mobile", myvalidator.ValidateMobile)
+		v.RegisterValidation("mobile", myvalidator.ValidateMobile) //给mobile这个tag(再required后面使用)限定规则
 	}
 	zap.S().Debugf("启动服务器，端口:%d", global.ServerConfig.Port)
 	if err := Router.Run(fmt.Sprintf(":%d", global.ServerConfig.Port)); err != nil {

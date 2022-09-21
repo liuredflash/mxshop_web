@@ -15,6 +15,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/hashicorp/consul/api"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -62,11 +63,34 @@ func HandleValidatorError(ctx *gin.Context, err error) {
 }
 
 func GetUserList(ctx *gin.Context) {
+
+	//初始化consuli连接的默认配置
+	cfg := api.DefaultConfig()
+	consulInfo := global.ServerConfig.ConsulInfo
+	cfg.Address = fmt.Sprintf("%s:%d", consulInfo.Host, consulInfo.Port)
+	//需要连接的srv的地址
+	var userSrvHost string
+	var userSrvPort int
+	//连接consul
+	client, err := api.NewClient(cfg)
+	if err != nil {
+		panic(err)
+	}
+	//使用server name请求它的地址
+	data, err := client.Agent().ServicesWithFilter(fmt.Sprintf("Service == \"%s\"", global.ServerConfig.UserSrvInfo.Name))
+	if err != nil {
+		panic(err)
+	}
+	for _, value := range data {
+		userSrvHost = value.Address
+		userSrvPort = value.Port
+		break
+	}
 	zap.S().Debugf("获取用户列表")
-	zap.S().Debugf(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvInfo.Host,
-		global.ServerConfig.UserSrvInfo.Port))
-	userConn, err := grpc.Dial(fmt.Sprintf("%s:%d", global.ServerConfig.UserSrvInfo.Host,
-		global.ServerConfig.UserSrvInfo.Port), grpc.WithInsecure())
+	zap.S().Debugf(fmt.Sprintf("%s:%d", userSrvHost,
+		userSrvPort))
+	userConn, err := grpc.Dial(fmt.Sprintf("%s:%d", userSrvHost,
+		userSrvPort), grpc.WithInsecure())
 	if err != nil {
 		zap.S().Errorw("[GetUserList] 连接 【用户服务失败】",
 			"msg", err.Error(),
