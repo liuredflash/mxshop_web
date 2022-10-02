@@ -3,19 +3,16 @@ package initialize
 import (
 	"fmt"
 	"mxshop_web/global"
+	"mxshop_web/utils"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
-func GetEnvInfo(env string) bool {
-	viper.AutomaticEnv()
-	return viper.GetBool(env)
-}
 func InitConfig() {
 	viper.SetConfigType("yaml") //当文件不是yaml结尾时需要显示指定，是yaml结尾时可以不要
-	debug := GetEnvInfo("MXSHOP_DEBUG")
+	debug := utils.GetEnvInfo("MXSHOP_DEBUG")
 	configFilePrefix := "config"
 	var configFileName string
 	if debug {

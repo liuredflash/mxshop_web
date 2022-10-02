@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"mxshop_web/global"
 	"mxshop_web/initialize"
+	"mxshop_web/utils"
 	myvalidator "mxshop_web/validator"
 
 	"github.com/gin-gonic/gin/binding"
@@ -21,6 +22,14 @@ func main() {
 	//注册验证器
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("mobile", myvalidator.ValidateMobile) //给mobile这个tag(再required后面使用)限定规则
+	}
+
+	debug := utils.GetEnvInfo("MXSHOP_DEBUG")
+	if !debug {
+		port, err := utils.GetFreePort()
+		if err == nil {
+			global.ServerConfig.Port = port
+		}
 	}
 	zap.S().Debugf("启动服务器，端口:%d", global.ServerConfig.Port)
 	if err := Router.Run(fmt.Sprintf(":%d", global.ServerConfig.Port)); err != nil {

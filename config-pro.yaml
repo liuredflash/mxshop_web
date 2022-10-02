@@ -1,7 +1,7 @@
 name: "user-web"
 port: 8080
 user_srv:
-  host: "172.22.80.198"
+  host: "172.21.49.96"
   port: 3001
   name: "user_srv"
 
@@ -10,5 +10,5 @@ jwt:
 
 
 consul:
-  host: "172.22.80.198"
+  host: "172.21.49.96"
   port: 8500
