@@ -74,6 +74,14 @@ func InitConfig() {
 
 	json.Unmarshal([]byte(content), &global.ServerConfig)
 	fmt.Println(global.ServerConfig)
+	configClient.ListenConfig(vo.ConfigParam{
+		DataId: global.NacosConfig.DataId,
+		Group:  global.NacosConfig.Group,
+		OnChange: func(namespace, group, dataId, data string) {
+			zap.S().Infof("==配置更新==\n%s", data)
+			json.Unmarshal([]byte(data), &global.ServerConfig)
+		},
+	})
 	//动态监控变化
 	// v.WatchConfig()
 	// v.OnConfigChange(func(e fsnotify.Event) {
