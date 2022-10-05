@@ -1,14 +1,26 @@
-name: "user-web"
-port: 8080
-user_srv:
-  host: "172.21.49.96"
-  port: 3001
-  name: "user_srv"
-
-jwt:
-  key: "l#z0%18wvFv7(~ZGIA@I"
+host: '192.168.68.106'
+port: 8848
+namespace: 'e5e64c36-6fde-4c2c-9fc0-d931bf06327a'
+user: 'nacos'
+password: 'nacos'
+dataid: 'user-web.json'
+group: 'dev'
 
 
-consul:
-  host: "172.21.49.96"
-  port: 8500
+
+
+
+# name: "user-web"
+# port: 8080
+# user_srv:
+#   host: "172.21.49.96"
+#   port: 3001
+#   name: "user_srv"
+
+# jwt:
+#   key: "l#z0%18wvFv7(~ZGIA@I"
+
+
+# consul:
+#   host: "172.21.49.96"
+#   port: 8500
